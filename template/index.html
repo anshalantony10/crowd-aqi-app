@@ -1,0 +1,61 @@
+<!-- FILEPATH: /C:/Users/Anshal/Desktop/Projects/Urban/index.html -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Real-time Geolocation Example</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    </head>
+    <body>
+        <h1>Real-time Geolocation Example</h1>
+        <p>Click the button to get your location:</p>
+        <button onclick="getLocation()">Get Location</button>
+        <p id="demo"></p>
+        <a href="/location">Show locations</a>
+        <!-- <button onclick="fetchAQI()">Fetch AQI</button> -->
+        <a href="/open">Show AQIs</a>
+
+        <script>
+            function getLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.watchPosition(showPosition);
+                } else {
+                    alert("Geolocation is not supported by this browser.");
+                }
+            }
+
+            function showPosition(position) {
+                var lat = position.coords.latitude;
+                var lon = position.coords.longitude;
+                // document.getElementById("demo").innerHTML =
+                    // "Latitude: " + lat + "<br>Longitude: " + lon;
+                $.ajax({
+                    type: "POST",
+                    url: "/location",
+                    data: { latitude: lat, longitude: lon },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+
+            // function fetchAQI() {
+            //     $.ajax({
+            //         type: "POST",
+            //         url: "/open",
+            //         success: function(response) {
+            //             console.log(response);
+            //         },
+            //         error: function(xhr, status, error) {
+            //             console.log(xhr.responseText);
+            //         }
+            //     });
+            // }
+        </script>
+    </body>
+</html>
+
+       

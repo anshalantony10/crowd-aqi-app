@@ -1,0 +1,254 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+  
+  <title>Forecast Information</title>
+</head>
+<body>
+
+<h1>Forecast Information</h1>
+
+<canvas id="o3Chart" width="400" height="200"></canvas>
+<script>
+  // Function to create an HTML list from forecast data
+  function createForecastList(data, pollutant) {
+    const list = document.createElement('ul');
+    data.forEach(entry => {
+      const listItem = document.createElement('li');
+      listItem.textContent = `Date: ${entry.day}, Avg: ${entry.avg}, Max: ${entry.max}, Min: ${entry.min}`;
+      list.appendChild(listItem);
+    });
+    return `<h2>${pollutant} Forecast:</h2>${list.outerHTML}`;
+  }
+
+  // Function to fetch JSON data from a URL based on current location
+  async function fetchData(lat, long) {
+    try {
+      const apiUrl = `https://api.waqi.info/feed/geo:${lat};${long}/?token=a82668d29bbf0df2588bf99480928eae2001cad7`;
+      const response = await fetch(apiUrl);
+      const jsonResponse = await response.json();
+
+      // Extract forecast data
+      const forecastData = jsonResponse.data.forecast.daily;
+
+      // Display forecast information in the body
+      document.body.innerHTML += createForecastList(forecastData.o3, 'O3');
+      document.body.innerHTML += createForecastList(forecastData.pm10, 'PM10');
+      document.body.innerHTML += createForecastList(forecastData.pm25, 'PM25');
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  // Function to get current location and call fetchData
+  function getCurrentLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const lat = position.coords.latitude;
+          const long = position.coords.longitude;
+          fetchData(lat, long);
+          createO3Chart(lat, long);
+        },
+        error => {
+          console.error('Error getting location:', error);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+    }
+  }
+
+  // Call the getCurrentLocation function
+  getCurrentLocation();
+  async function createO3Chart(lat, long) {
+    const apiUrl = `https://api.waqi.info/feed/geo:${lat};${long}/?token=a82668d29bbf0df2588bf99480928eae2001cad7`;
+      const response = await fetch(apiUrl);
+      const jsonResponse = await response.json();
+
+      // Extract forecast data
+      const forecastData = jsonResponse.data.forecast.daily;
+      const ctx = document.getElementById('o3Chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: forecastData.o3.map(entry => entry.day),
+          datasets: [{
+            label: 'Average O3',
+            borderColor: 'rgb(75, 192, 192)',
+            data: forecastData.o3.map(entry => entry.avg),
+            fill: false,
+          }, {
+            label: 'Max O3',
+            borderColor: 'rgb(255, 99, 132)',
+            data: forecastData.o3.map(entry => entry.max),
+            fill: false,
+          }, {
+            label: 'Min O3',
+            borderColor: 'rgb(255, 205, 86)',
+            data: forecastData.o3.map(entry => entry.min),
+            fill: false,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day',
+                displayFormats: {
+                  day: 'yyyy-mm-dd'
+                }
+              },
+            },
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    }
+
+    // Call the function to create O3 chart
+    // createO3Chart();
+
+</script>
+    
+</body>
+</html>
+<html lang="en"> -->
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+      
+      <title>Forecast Information</title>
+      <style>
+        canvas {
+          max-width: 600px;
+          margin: 20px;
+        }
+      </style>
+    </head>
+    <body>
+    
+    <h1>Forecast Information</h1>
+    
+    <canvas id="o3Chart" width="400" height="200"></canvas>
+    <script>
+      // Function to create an HTML list from forecast data
+      function createForecastList(data, pollutant) {
+        const list = document.createElement('ul');
+        data.forEach(entry => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `Date: ${entry.day}, Avg: ${entry.avg}, Max: ${entry.max}, Min: ${entry.min}`;
+          list.appendChild(listItem);
+        });
+        return `<h2>${pollutant} Forecast:</h2>${list.outerHTML}`;
+      }
+    
+      // Function to fetch JSON data from a URL based on current location
+      async function fetchData(lat, long) {
+        try {
+          const apiUrl = `https://api.waqi.info/feed/geo:${lat};${long}/?token=a82668d29bbf0df2588bf99480928eae2001cad7`;
+          const response = await fetch(apiUrl);
+          const jsonResponse = await response.json();
+    
+          // Extract forecast data
+          const forecastData = jsonResponse.data.forecast.daily;
+    
+          // Display forecast information in the body
+          document.body.innerHTML += createForecastList(forecastData.o3, 'O3');
+          document.body.innerHTML += createForecastList(forecastData.pm10, 'PM10');
+          document.body.innerHTML += createForecastList(forecastData.pm25, 'PM25');
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+    
+      // Function to get current location and call fetchData
+      function getCurrentLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            position => {
+              const lat = position.coords.latitude;
+              const long = position.coords.longitude;
+              fetchData(lat, long);
+              createO3Chart(lat, long);
+            },
+            error => {
+              console.error('Error getting location:', error);
+            }
+          );
+        } else {
+          console.error('Geolocation is not supported by this browser.');
+        }
+      }
+    
+      // Call the getCurrentLocation function
+      getCurrentLocation();
+    
+      async function createO3Chart(lat, long) {
+        const apiUrl = `https://api.waqi.info/feed/geo:${lat};${long}/?token=a82668d29bbf0df2588bf99480928eae2001cad7`;
+        const response = await fetch(apiUrl);
+        const jsonResponse = await response.json();
+    
+        // Extract forecast data
+        const forecastData = jsonResponse.data.forecast.daily;
+        const ctx = document.getElementById('o3Chart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: forecastData.o3.map(entry => entry.day),
+            datasets: [{
+              label: 'Average O3',
+              borderColor: 'rgb(75, 192, 192)',
+              data: forecastData.o3.map(entry => entry.avg),
+              fill: false,
+            }, {
+              label: 'Max O3',
+              borderColor: 'rgb(255, 99, 132)',
+              data: forecastData.o3.map(entry => entry.max),
+              fill: false,
+            }, {
+              label: 'Min O3',
+              borderColor: 'rgb(255, 205, 86)',
+              data: forecastData.o3.map(entry => entry.min),
+              fill: false,
+            }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                type: 'time',
+                time: {
+                  unit: 'day',
+                  displayFormats: {
+                    day: 'yyyy-mm-dd'
+                  }
+                },
+              },
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      }
+    </script>
+    </body>
+    </html>
+    

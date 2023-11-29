@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map with Markers</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 400px;
+    }
+    .marker-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+{% block content %}
+
+<div id="tar"></div>
+
+<div id="test">{{ locations }}</div>
+
+<script> var ty = {{ locations | tojson }}; 
+var by = JSON.parse(ty); 
+document.getElementByID("tar").innerHTML = ty </script>
+
+{% endblock %}
+
+<script>
+
+var data = [
+  { lat: 37.7749, lon: -122.4194, aqi: 50 }, // San Francisco, CA
+  { lat: 40.7128, lon: -74.0060, aqi: 100 }, // New York, NY
+  // Add more data points as needed
+];
+
+var map = L.map('map').setView([data[0].lat, data[0].lon], 4);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+function getMarkerColor(aqi) {
+  if (aqi <= 50) {
+    return 'green';
+  } else if (aqi <= 100) {
+    return 'yellow';
+  } else {
+    return 'red';
+  }
+}
+
+data.forEach(function (point) {
+  var marker = L.marker([point.lat, point.lon], {
+    icon: L.divIcon({
+      className: 'marker-color',
+      html: '<div style="background-color: ' + getMarkerColor(point.aqi) + ';" class="marker-color"></div>',
+      iconSize: [20, 20],
+      iconAnchor: [10, 10],
+    }),
+  }).addTo(map);
+});
+
+</script>
+</body>
+</html>

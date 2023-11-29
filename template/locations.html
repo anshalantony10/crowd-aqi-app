@@ -1,0 +1,16 @@
+<!-- FILEPATH: /c:/Users/Anshal/Desktop/Projects/Urban/template/locations.html -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Locations</title>
+    </head>
+    <body>
+        <h1>Locations</h1>
+        <ul>
+            {% for location in locations %}
+                <li>Latitude: {{ location.latitude }}, Longitude: {{ location.longitude }}</li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
