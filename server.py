@@ -6,7 +6,7 @@ app = Flask(__name__,template_folder="template")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///location.db'
 db = SQLAlchemy(app)  
 
-class Location(db.Model):
+class Datapoint(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
@@ -25,17 +25,17 @@ def add_location():
     response = requests.get(api_url)
     if response.status_code == 200:
         data = response.json()
-    location = Location(latitude=latitude, longitude=longitude, aqi=data['data']['aqi'])
+    location = Datapoint(latitude=latitude, longitude=longitude, aqi=data['data']['aqi'])
     db.session.add(location)
     db.session.commit()
     return 'Location added successfully'
 
 @app.route('/location', methods=['GET'])
 def get_location():
-    locations = Location.query.all()
+    locations = Datapoint.query.all()
     location_list = []
     for location in locations:
-        location_dict = {'latitude': location.latitude, 'longitude': location.longitude, 'aqi': location.aqi}
+        location_dict = {'lat': location.latitude, 'lon': location.longitude, 'aqi': location.aqi}
         location_list.append(location_dict)
     return render_template('mapa.html', locations=location_list)
 

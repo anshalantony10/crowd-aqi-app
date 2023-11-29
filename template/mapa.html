@@ -1,74 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Map with Markers</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <style>
-    #map {
-      height: 400px;
-    }
-    .marker-color {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 2px solid #fff;
-    }
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Map with Markers</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      #map {
+        height: 100vh; /* Set height to 100% of the viewport height */
+      }
+      .marker-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
 
-<div id="map"></div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    {% block content %}
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-{% block content %}
+    <div id="tar"></div>
 
-<div id="tar"></div>
+    <script>
+      var data = {{ locations | tojson |safe }};
+      var newData = [
+        { lat: 53.3498, lon: -6.2603, aqi: 45 }, 
+        { lat: 51.8969, lon: -8.4863, aqi: 55 }, 
+        { lat: 53.2707, lon: -9.0568, aqi: 40 }, 
+        { lat: 52.6638, lon: -8.6267, aqi: 60 }, 
+      ];
+      data = data.concat(newData);
 
-<div id="test">{{ locations }}</div>
+      var map = L.map("map").setView([data[0].lat, data[0].lon], 4);
 
-<script> var ty = {{ locations | tojson }}; 
-var by = JSON.parse(ty); 
-document.getElementByID("tar").innerHTML = ty </script>
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors",
+      }).addTo(map);
 
-{% endblock %}
+      var alerted = false;
 
-<script>
+      function showAlert(message, icon) {
+        Swal.fire({
+          title: "Alert!",
+          text: message,
+          icon: icon,
+          confirmButtonText: "OK",
+        });
+      }
 
-var data = [
-  { lat: 37.7749, lon: -122.4194, aqi: 50 }, // San Francisco, CA
-  { lat: 40.7128, lon: -74.0060, aqi: 100 }, // New York, NY
-  // Add more data points as needed
-];
+      function getMarkerColor(aqi) {
+        if (aqi <= 50) {
+          if (!alerted) {
+            showAlert("All good! Don't wear a mask :)", "success");
+            alerted = true;
+          }
+          return "green";
+        } else if (aqi <= 100) {
+          if (!alerted) {
+            showAlert("Take Precaution! Wear a mask :/", "warning");
+            alerted = true;
+          }
+          return "yellow";
+        } else {
+          if (!alerted) {
+            showAlert(
+              "You absolutely need to wear a mask. Low Air Quality :(",
+              "error"
+            );
+            alerted = true;
+          }
+          return "red";
+        }
+      }
 
-var map = L.map('map').setView([data[0].lat, data[0].lon], 4);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap contributors'
-}).addTo(map);
-
-function getMarkerColor(aqi) {
-  if (aqi <= 50) {
-    return 'green';
-  } else if (aqi <= 100) {
-    return 'yellow';
-  } else {
-    return 'red';
-  }
-}
-
-data.forEach(function (point) {
-  var marker = L.marker([point.lat, point.lon], {
-    icon: L.divIcon({
-      className: 'marker-color',
-      html: '<div style="background-color: ' + getMarkerColor(point.aqi) + ';" class="marker-color"></div>',
-      iconSize: [20, 20],
-      iconAnchor: [10, 10],
-    }),
-  }).addTo(map);
-});
-
-</script>
-</body>
+      data.forEach(function (point) {
+        var marker = L.marker([point.lat, point.lon], {
+          icon: L.divIcon({
+            className: "marker-color",
+            html:
+              '<div style="background-color: ' +
+              getMarkerColor(point.aqi) +
+              ';" class="marker-color"></div>',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10],
+          }),
+        }).addTo(map);
+      });
+    </script>
+    {% endblock %}
+  </body>
 </html>

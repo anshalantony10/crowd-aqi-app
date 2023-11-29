@@ -1,61 +1,94 @@
-<!-- FILEPATH: /C:/Users/Anshal/Desktop/Projects/Urban/index.html -->
-
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Real-time Geolocation Example</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
-    </head>
-    <body>
+<head>
+    <title>Real-time Geolocation Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            width: 100%; /* Make the button full-width */
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #demo {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        a {
+            display: block;
+            margin-top: 20px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Container style */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
         <h1>Real-time Geolocation Example</h1>
         <p>Click the button to get your location:</p>
         <button onclick="getLocation()">Get Location</button>
         <p id="demo"></p>
         <a href="/location">Show locations</a>
-        <!-- <button onclick="fetchAQI()">Fetch AQI</button> -->
-        <a href="/open">Show AQIs</a>
+    </div>
 
-        <script>
-            function getLocation() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.watchPosition(showPosition);
-                } else {
-                    alert("Geolocation is not supported by this browser.");
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(showPosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function showPosition(position) {
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+            $.ajax({
+                type: "POST",
+                url: "/location",
+                data: { latitude: lat, longitude: lon },
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
                 }
-            }
-
-            function showPosition(position) {
-                var lat = position.coords.latitude;
-                var lon = position.coords.longitude;
-                // document.getElementById("demo").innerHTML =
-                    // "Latitude: " + lat + "<br>Longitude: " + lon;
-                $.ajax({
-                    type: "POST",
-                    url: "/location",
-                    data: { latitude: lat, longitude: lon },
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(xhr, status, error) {
-                        console.log(xhr.responseText);
-                    }
-                });
-            }
-
-            // function fetchAQI() {
-            //     $.ajax({
-            //         type: "POST",
-            //         url: "/open",
-            //         success: function(response) {
-            //             console.log(response);
-            //         },
-            //         error: function(xhr, status, error) {
-            //             console.log(xhr.responseText);
-            //         }
-            //     });
-            // }
-        </script>
-    </body>
+            });
+        }
+    </script>
+</body>
 </html>
-
-       
